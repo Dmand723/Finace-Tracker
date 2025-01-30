@@ -5,7 +5,21 @@ import ExpenseItem from "@/components/ExpenseCategoryItem";
 import Modal from "@/components/Modal";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+
+// Firebase
+import { db } from "@/lib/firebase";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
+
+// Icons
+import { FaRegTrashAlt } from "react-icons/fa";
+import { Are_You_Serious } from "next/font/google";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -37,7 +51,78 @@ const DUMMY_DATA = [
 ];
 
 export default function Home() {
-  const [showAddIncomeModal, setshowAddIncomeModal] = useState(false);
+  const [income, setIncome] = useState([]); // UseState for array of income history
+  console.log(income);
+  const [showAddIncomeModal, setshowAddIncomeModal] = useState(false); // UseState to determine if the modal for the add income is shown or not
+  const amountRef = useRef(); // Refrence for the amount of income in the add income form
+  const descriptionRef = useRef(); // Refrence for the description of the income in the add income form
+
+  //Handler Funtions------------------------------------------
+  //Handler fucntion for adding a new income to the db
+  const addIncomeHandler = async (e) => {
+    e.preventDefault();
+
+    const newIncome = {
+      amount: amountRef.current.value,
+      description: descriptionRef.current.value,
+      createdAt: new Date(),
+    };
+
+    const collectionRef = collection(db, "income");
+    try {
+      const docSnap = await addDoc(collectionRef, newIncome);
+
+      // Update state
+      setIncome((prevState) => {
+        return [
+          ...prevState,
+          {
+            id: docSnap.id,
+            ...newIncome,
+          },
+        ];
+      });
+
+      descriptionRef.current.value = "";
+      amountRef.current.value = "";
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //Handler for deleting previous entrys in the income history
+  const deleteIncomeEntryHandler = async (incomeId) => {
+    const docRef = doc(db, "income", incomeId);
+    setIncome((prevState) => {
+      return prevState.filter((i) => i.id !== incomeId);
+    });
+    // Update State
+
+    try {
+      await deleteDoc(docRef);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //---------------------------------------------------------
+
+  useEffect(() => {
+    const getIncomeData = async () => {
+      const collectionRef = collection(db, "income");
+      const docsSnap = await getDocs(collectionRef);
+
+      const data = docsSnap.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(), //Get remander of the feilds
+          createdAt: new Date(doc.data().createdAt.toMillis()),
+        };
+      });
+
+      setIncome(data);
+    };
+
+    getIncomeData();
+  }, []);
 
   return (
     <>
@@ -49,6 +134,7 @@ export default function Home() {
             <input
               name="amount"
               type="number"
+              ref={amountRef}
               min={0.01}
               step={0.01}
               placeholder="Enter Income Amount"
@@ -60,15 +146,44 @@ export default function Home() {
             <input
               name="description"
               type="text"
+              ref={descriptionRef}
               placeholder="Enter Income Description "
               required
             />
           </div>
 
-          <button type="submit" className="btn btn-primary">
+          <button
+            onClick={(e) => addIncomeHandler(e)}
+            type="submit"
+            className="btn btn-primary"
+          >
             Add entry
           </button>
         </form>
+        <div className="flex flex-col gap-4 mt-6">
+          <h3 className="text-2xl font-bold">Income History</h3>
+
+          {income.map((i) => {
+            return (
+              <div className="flex items-center justify-between" key={i.id}>
+                <div>
+                  <p className="font-semibold">{i.description}</p>
+                  <small className="text-xs">{i.createdAt.toISOString()}</small>
+                </div>
+                <p className="flex items-center gap-2">
+                  {currencyFormatter(i.amount)}
+                  <button
+                    onClick={() => {
+                      deleteIncomeEntryHandler(i.id);
+                    }}
+                  >
+                    <FaRegTrashAlt />
+                  </button>
+                </p>
+              </div>
+            );
+          })}
+        </div>
       </Modal>
       <main className="conainer max-w-2xl px-6 mx-auto">
         <section className="py-3">
