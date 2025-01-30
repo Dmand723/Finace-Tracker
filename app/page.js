@@ -37,13 +37,38 @@ const DUMMY_DATA = [
 ];
 
 export default function Home() {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [showAddIncomeModal, setshowAddIncomeModal] = useState(false);
 
   return (
     <>
-      {/* Modal */}
-      <Modal show={modalIsOpen} onClose={setModalIsOpen}>
-        <h3>Hello Modal</h3>
+      {/* Add Income Modal */}
+      <Modal show={showAddIncomeModal} onClose={setshowAddIncomeModal}>
+        <form className="flex flex-col gap-4">
+          <div className="input-group">
+            <label htmlFor="amount">Income Amount</label>
+            <input
+              name="amount"
+              type="number"
+              min={0.01}
+              step={0.01}
+              placeholder="Enter Income Amount"
+              required
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="description">Desciption</label>
+            <input
+              name="description"
+              type="text"
+              placeholder="Enter Income Description "
+              required
+            />
+          </div>
+
+          <button type="submit" className="btn btn-primary">
+            Add entry
+          </button>
+        </form>
       </Modal>
       <main className="conainer max-w-2xl px-6 mx-auto">
         <section className="py-3">
@@ -52,15 +77,15 @@ export default function Home() {
         </section>
 
         <section className="flex items-center gap-2 py-3">
-          <button
-            onClick={() => {
-              setModalIsOpen(true);
-            }}
-            className="btn btn-primary"
-          >
+          <button onClick={() => {}} className="btn btn-primary">
             + Expenses
           </button>
-          <button className="btn btn-primary-outline">+ Income</button>
+          <button
+            onClick={() => setshowAddIncomeModal(true)}
+            className="btn btn-primary-outline"
+          >
+            + Income
+          </button>
         </section>
 
         {/* Expenses */}
