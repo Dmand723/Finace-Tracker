@@ -1,15 +1,19 @@
 import Modal from "@/components/Modal";
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import { financeContex } from "@/lib/store/finance-contex";
 import { v4 as uuidv4 } from "uuid";
 
 export default function AddExpesesModal({ show, onClose }) {
   const [expenseAmount, setExpenseAmount] = useState("");
   const [selectedCat, setSeletedCat] = useState(null);
+  const [showNewCat, setShowNewCat] = useState(false);
 
-  const { expenses } = useContext(financeContex);
+  const { expenses, addExpenseItem, addCategory } = useContext(financeContex);
 
-  const addExpenseItemHandler = () => {
+  const titleRef = useRef();
+  const colorRef = useRef();
+
+  const addExpenseItemHandler = async () => {
     const expense = expenses.find((e) => {
       return e.id === selectedCat;
     });
@@ -27,10 +31,26 @@ export default function AddExpesesModal({ show, onClose }) {
         },
       ],
     };
-    console.log(newExpense);
-    setExpenseAmount("");
-    setSeletedCat(null);
-    //onClose(); // Do this if you want the modal to close after adding an expense
+    try {
+      await addExpenseItem(selectedCat, newExpense);
+
+      console.log(newExpense);
+      setExpenseAmount("");
+      setSeletedCat(null);
+      //onClose(); // Do this if you want the modal to close after adding an expense
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const addCategoryHandler = async () => {
+    const title = titleRef.current.value;
+    const color = colorRef.current.value;
+
+    try {
+      await addCategory({ title, color, total: 0 });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -54,7 +74,45 @@ export default function AddExpesesModal({ show, onClose }) {
       {/* Expense Categories */}
       {expenseAmount > 0 && (
         <div className="flex flex-col gap-4 mt-6">
-          <h3 className="text-2xl capitalize">Select Expense Category</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-2xl capitalize">Select Expense Category</h3>
+            <button
+              className="text-lime-400"
+              onClick={() => {
+                setShowNewCat(true);
+              }}
+            >
+              + New Category
+            </button>
+          </div>
+
+          {showNewCat && (
+            <div className="flex items-center justify-between">
+              <input type="test" placeholder="Enter Title" ref={titleRef} />
+              <label htmlFor="colorInput">Pick Color</label>
+              <input
+                type="color"
+                className="w-24 h-10"
+                ref={colorRef}
+                name="colorInput"
+              />
+              <button
+                onClick={addCategoryHandler}
+                className="btn btn-primary-outline"
+              >
+                Create
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={() => {
+                  setShowNewCat(false);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+
           {expenses.map((expense) => {
             return (
               <button

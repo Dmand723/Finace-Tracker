@@ -4,6 +4,7 @@ import { currencyFormatter } from "@/lib/utils";
 import ExpenseItem from "@/components/ExpenseCategoryItem";
 import AddIncomeModal from "@/components/modals/AddIncomeModal";
 import AddExpesesModal from "@/components/modals/AddExpensesModal";
+import ViewExpenseModal from "@/components/modals/VeiwExpenseModal";
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
@@ -14,7 +15,8 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function Home() {
   const [showAddIncomeModal, setshowAddIncomeModal] = useState(false); // UseState to determine if the modal for the add income is shown or not
-  const [showAddExpensesModal, setshowAddExpensesModal] = useState(false); // UseState to determine if the modal for the add income is shown or not
+  const [showAddExpensesModal, setshowAddExpensesModal] = useState(false); // UseState to determine if the modal for the add expense income is shown or not
+  const [showVeiwExpenseModal, setShowVeiwExpenseModal] = useState(false); // UseState to determine if the modal for the veiw expense income is shown or not
 
   const [balance, setBalance] = useState(0);
 
@@ -43,6 +45,12 @@ export default function Home() {
       <AddExpesesModal
         show={showAddExpensesModal}
         onClose={setshowAddExpensesModal}
+      />
+
+      {/* Veiw Expense Modal */}
+      <ViewExpenseModal
+        show={showVeiwExpenseModal}
+        onClose={setShowVeiwExpenseModal}
       />
 
       <main className="conainer max-w-2xl px-6 mx-auto">
@@ -98,7 +106,7 @@ export default function Home() {
                     data: expenses.map((expense) => expense.total),
                     backgroundColor: expenses.map((expense) => expense.color),
                     borderColor: ["#18181b"],
-                    borderWidth: 5,
+                    borderWidth: expenses.length > 1 ? 5 : 0, // added so if there is only one expense the broder is gone so there is not a space
                   },
                 ],
               }}
