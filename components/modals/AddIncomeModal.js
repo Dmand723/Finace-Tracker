@@ -18,7 +18,7 @@ export default function AddIncomeModal({ show, onClose }) {
     e.preventDefault();
 
     const newIncome = {
-      amount: amountRef.current.value,
+      amount: +amountRef.current.value,
       description: descriptionRef.current.value,
       createdAt: new Date(),
     };
