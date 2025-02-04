@@ -21,3 +21,11 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Features
+
+In this project you can login with a google account as well as logout.
+
+You can track your finance and expenses by adding income, expenses, and changing them as needed
+
+You will see all of this data in 2 ways, first a card form and second a Dougnut chart
