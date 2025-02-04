@@ -34,4 +34,7 @@
   .input-group {
     @apply flex flex-col gap-4;
   }
+  .btn-disabled {
+    @apply border border-gray-500 text-gray-500 hover:scale-100;
+  }
 }

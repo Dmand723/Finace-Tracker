@@ -1,5 +1,5 @@
 import Modal from "@/components/Modal";
-import { useContext, useState, useRef } from "react";
+import { useContext, useState, useRef, use } from "react";
 import { financeContex } from "@/lib/store/finance-contex";
 import { v4 as uuidv4 } from "uuid";
 
@@ -45,7 +45,9 @@ export default function AddExpesesModal({ show, onClose }) {
   const addCategoryHandler = async () => {
     const title = titleRef.current.value;
     const color = colorRef.current.value;
-
+    if (title == "") {
+      return;
+    }
     try {
       await addCategory({ title, color, total: 0 });
     } catch (error) {
@@ -98,7 +100,7 @@ export default function AddExpesesModal({ show, onClose }) {
               />
               <button
                 onClick={addCategoryHandler}
-                className="btn btn-primary-outline"
+                className={"btn btn-primary-outline"}
               >
                 Create
               </button>
