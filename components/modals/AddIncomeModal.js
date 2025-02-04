@@ -2,6 +2,8 @@ import { useRef, useEffect, useContext } from "react";
 import { currencyFormatter } from "@/lib/utils";
 import Modal from "@/components/Modal";
 
+import { toast } from "react-toastify";
+
 import { financeContex } from "@/lib/store/finance-contex";
 import { authContext } from "@/lib/store/auth-contex";
 
@@ -29,16 +31,20 @@ export default function AddIncomeModal({ show, onClose }) {
       await addIncomeItem(newIncome);
       descriptionRef.current.value = "";
       amountRef.current.value = "";
+      toast.success("Income Added Successfully");
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
+      toast.error(error.message);
     }
   };
   //Handler for deleting previous entrys in the income history
-  const deleteIncomeEntryHandler = async (incomeId) => {
+  const deleteIncomeEntryHandler = async (incomeId, desc) => {
     try {
       await removeIncomeItem(incomeId);
+      toast.warn(`Income Deleted: ${desc}`);
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -92,7 +98,7 @@ export default function AddIncomeModal({ show, onClose }) {
                 {currencyFormatter(i.amount)}
                 <button
                   onClick={() => {
-                    deleteIncomeEntryHandler(i.id);
+                    deleteIncomeEntryHandler(i.id, i.description);
                   }}
                 >
                   <FaRegTrashAlt />

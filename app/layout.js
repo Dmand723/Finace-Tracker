@@ -1,6 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Nav from "@/components/Navigation";
 
 import FinanceContexProvider from "@/lib/store/finance-contex";
@@ -29,6 +32,7 @@ export default function RootLayout({ children }) {
       >
         <AuthContextProvider>
           <FinanceContexProvider>
+            <ToastContainer />
             <Nav />
             {children}
           </FinanceContexProvider>

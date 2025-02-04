@@ -3,6 +3,8 @@ import { useContext, useState, useRef, use } from "react";
 import { financeContex } from "@/lib/store/finance-contex";
 import { v4 as uuidv4 } from "uuid";
 
+import { toast } from "react-toastify";
+
 export default function AddExpesesModal({ show, onClose }) {
   const [expenseAmount, setExpenseAmount] = useState("");
   const [selectedCat, setSeletedCat] = useState(null);
@@ -38,20 +40,26 @@ export default function AddExpesesModal({ show, onClose }) {
       setExpenseAmount("");
       setSeletedCat(null);
       //onClose(); // Do this if you want the modal to close after adding an expense
+      toast.success("Expense Item Added");
     } catch (error) {
       console.log(error.message);
+      toast.error(error.message);
     }
   };
   const addCategoryHandler = async () => {
     const title = titleRef.current.value;
     const color = colorRef.current.value;
     if (title == "") {
+      toast.error("Please Enter a Category Name");
       return;
     }
     try {
       await addCategory({ title, color, total: 0 });
+      setShowNewCat(false);
+      toast.success(`Category Created: ${title}`);
     } catch (error) {
       console.log(error);
+      toast.error(error.message);
     }
   };
 

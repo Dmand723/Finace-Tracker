@@ -4,6 +4,8 @@ import { financeContex } from "@/lib/store/finance-contex";
 import Modal from "@/components/Modal";
 import { currencyFormatter } from "@/lib/utils";
 
+import { toast } from "react-toastify";
+
 import { FaRegTrashAlt } from "react-icons/fa";
 
 export default function ViewExpenseModal({ show, onClose, expense }) {
@@ -14,6 +16,7 @@ export default function ViewExpenseModal({ show, onClose, expense }) {
     try {
       // Remove the item from the list
       const updatedItems = expense.items.filter((i) => i.id !== item.id);
+      toast.warn(`Expense Item Deleted`);
 
       // Update the expense balance
       const updatedExpense = {
@@ -24,14 +27,17 @@ export default function ViewExpenseModal({ show, onClose, expense }) {
       await deleteExpenseItem(updatedExpense, expense.id);
     } catch (error) {
       console.log(error.message);
+      toast.error(error.message);
     }
   };
 
   const deleteExpenseHandler = async () => {
     try {
       await deleteExpenseCategory(expense.id);
+      toast.warn(`Expense Category Deleted: ${expense.title} `);
     } catch (error) {
       console.log(error.message);
+      toast.error(error.message);
     }
   };
 
