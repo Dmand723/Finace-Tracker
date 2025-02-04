@@ -21,6 +21,12 @@ export default function Home() {
 
   const { expenses, income } = useContext(financeContex); // pulling the expenses documents from the finaceContex file pulling it from the db
 
+  const amountChecker = () => {
+    let amount = 0;
+    expenses.map((e) => e.total > 0 && amount++);
+    return amount;
+  }; //Funtion for checking how many expense categores there are that have more than $0.00
+
   useEffect(() => {
     const newBalance = income.reduce((total, i) => {
       return total + i.amount;
@@ -92,7 +98,7 @@ export default function Home() {
                     data: expenses.map((expense) => expense.total),
                     backgroundColor: expenses.map((expense) => expense.color),
                     borderColor: ["#18181b"],
-                    borderWidth: expenses.length > 1 ? 5 : 0, // added so if there is only one expense the broder is gone so there is not a space
+                    borderWidth: amountChecker() > 1 ? 5 : 0, // added so if there is only one expense the broder is gone so there is not a space
                   },
                 ],
               }}
