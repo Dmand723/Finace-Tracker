@@ -4,6 +4,7 @@ import "./globals.css";
 import Nav from "@/components/Navigation";
 
 import FinanceContexProvider from "@/lib/store/finance-contex";
+import AuthContextProvider from "@/lib/store/auth-contex";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,10 +27,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <FinanceContexProvider>
-          <Nav />
-          {children}
-        </FinanceContexProvider>
+        <AuthContextProvider>
+          <FinanceContexProvider>
+            <Nav />
+            {children}
+          </FinanceContexProvider>
+        </AuthContextProvider>
       </body>
     </html>
   );

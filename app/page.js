@@ -4,12 +4,13 @@ import { currencyFormatter } from "@/lib/utils";
 import ExpenseItem from "@/components/ExpenseCategoryItem";
 import AddIncomeModal from "@/components/modals/AddIncomeModal";
 import AddExpesesModal from "@/components/modals/AddExpensesModal";
-import ViewExpenseModal from "@/components/modals/VeiwExpenseModal";
+import SignIn from "@/components/SignIn";
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { useState, useContext, use, useEffect } from "react";
 import { financeContex } from "@/lib/store/finance-contex";
+import { authContext } from "@/lib/store/auth-contex";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -20,6 +21,7 @@ export default function Home() {
   const [balance, setBalance] = useState(0);
 
   const { expenses, income } = useContext(financeContex); // pulling the expenses documents from the finaceContex file pulling it from the db
+  const { user } = useContext(authContext);
 
   const amountChecker = () => {
     let amount = 0;
@@ -37,6 +39,10 @@ export default function Home() {
 
     setBalance(newBalance);
   }, [expenses, income]);
+
+  if (!user) {
+    return <SignIn />;
+  }
 
   return (
     <>

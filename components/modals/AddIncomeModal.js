@@ -3,6 +3,7 @@ import { currencyFormatter } from "@/lib/utils";
 import Modal from "@/components/Modal";
 
 import { financeContex } from "@/lib/store/finance-contex";
+import { authContext } from "@/lib/store/auth-contex";
 
 // Icons
 import { FaRegTrashAlt } from "react-icons/fa";
@@ -11,6 +12,7 @@ export default function AddIncomeModal({ show, onClose }) {
   const amountRef = useRef();
   const descriptionRef = useRef();
   const { income, addIncomeItem, removeIncomeItem } = useContext(financeContex);
+  const { user } = useContext(authContext);
 
   //Handler Funtions------------------------------------------
   //Handler fucntion for adding a new income to the db
@@ -21,6 +23,7 @@ export default function AddIncomeModal({ show, onClose }) {
       amount: +amountRef.current.value,
       description: descriptionRef.current.value,
       createdAt: new Date(),
+      uid: user.uid,
     };
     try {
       await addIncomeItem(newIncome);
