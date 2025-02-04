@@ -16,7 +16,6 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 export default function Home() {
   const [showAddIncomeModal, setshowAddIncomeModal] = useState(false); // UseState to determine if the modal for the add income is shown or not
   const [showAddExpensesModal, setshowAddExpensesModal] = useState(false); // UseState to determine if the modal for the add expense income is shown or not
-  const [showVeiwExpenseModal, setShowVeiwExpenseModal] = useState(false); // UseState to determine if the modal for the veiw expense income is shown or not
 
   const [balance, setBalance] = useState(0);
 
@@ -47,12 +46,6 @@ export default function Home() {
         onClose={setshowAddExpensesModal}
       />
 
-      {/* Veiw Expense Modal */}
-      <ViewExpenseModal
-        show={showVeiwExpenseModal}
-        onClose={setShowVeiwExpenseModal}
-      />
-
       <main className="conainer max-w-2xl px-6 mx-auto">
         <section className="py-3">
           <small className="text-gray-400 text-md">My Balance</small>
@@ -80,15 +73,8 @@ export default function Home() {
         <section className="py-6">
           <h3 className="text-2xl">My Expenses</h3>
           <div className="flex flex-col gap-4 mt-6">
-            {expenses.map((item) => {
-              return (
-                <ExpenseItem
-                  color={item.color}
-                  title={item.title}
-                  total={item.total}
-                  key={item.id}
-                />
-              );
+            {expenses.map((expense) => {
+              return <ExpenseItem expense={expense} key={expense.id} />;
             })}
           </div>
         </section>
